@@ -4,84 +4,9 @@ import Header from '../components/Header';
 import CategoryFilters from '../components/CategoryFilters';
 import MasonryGrid from '../components/MasonryGrid';
 import { Loader2 } from 'lucide-react';
+import { DEMO_WORKS } from '../data/demoData';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
-
-// Demo works for initial display
-const DEMO_WORKS = [
-    {
-        work_id: 'demo_1',
-        user_id: 'demo_user_1',
-        title: 'Orecchini in Ceramica Blu',
-        description: 'Orecchini artigianali in ceramica dipinta a mano',
-        category: 'Orecchini',
-        image_path: 'https://images.unsplash.com/photo-1609252908235-20aeac3bbf8f?crop=entropy&cs=srgb&fm=jpg&q=85&w=600',
-        created_at: new Date().toISOString(),
-        artisan_name: 'Ceramiche di Luna',
-        artisan_picture: 'https://images.unsplash.com/photo-1768478563696-ca21b9692a8f?crop=entropy&cs=srgb&fm=jpg&q=85&w=150',
-        artisan_whatsapp: ''
-    },
-    {
-        work_id: 'demo_2',
-        user_id: 'demo_user_2',
-        title: 'Borsa all\'Uncinetto Multicolor',
-        description: 'Borsa fatta a mano con filati naturali',
-        category: 'Borse',
-        image_path: 'https://images.unsplash.com/photo-1770637266187-60cf9d509593?crop=entropy&cs=srgb&fm=jpg&q=85&w=600',
-        created_at: new Date().toISOString(),
-        artisan_name: 'Intrecci di Filo',
-        artisan_picture: 'https://images.unsplash.com/photo-1673103622378-62e9a29f71f2?crop=entropy&cs=srgb&fm=jpg&q=85&w=150',
-        artisan_whatsapp: ''
-    },
-    {
-        work_id: 'demo_3',
-        user_id: 'demo_user_3',
-        title: 'Scacciapensieri in Legno',
-        description: 'Scacciapensieri artigianale con elementi naturali',
-        category: 'Scacciapensieri',
-        image_path: 'https://images.unsplash.com/photo-1767608551302-1db76f601c38?crop=entropy&cs=srgb&fm=jpg&q=85&w=600',
-        created_at: new Date().toISOString(),
-        artisan_name: 'Vento & Suono',
-        artisan_picture: 'https://images.pexels.com/photos/33762784/pexels-photo-33762784.jpeg?auto=compress&cs=tinysrgb&w=150',
-        artisan_whatsapp: ''
-    },
-    {
-        work_id: 'demo_4',
-        user_id: 'demo_user_4',
-        title: 'Borsa Crochet Colorata',
-        description: 'Borsa realizzata interamente all\'uncinetto',
-        category: 'Uncinetto',
-        image_path: 'https://images.pexels.com/photos/33853684/pexels-photo-33853684.jpeg?auto=compress&cs=tinysrgb&w=600',
-        created_at: new Date().toISOString(),
-        artisan_name: 'Mani d\'Oro',
-        artisan_picture: 'https://images.unsplash.com/photo-1743807059766-9d3ca4f35b60?crop=entropy&cs=srgb&fm=jpg&q=85&w=150',
-        artisan_whatsapp: ''
-    },
-    {
-        work_id: 'demo_5',
-        user_id: 'demo_user_1',
-        title: 'Ciondolo in Ceramica',
-        description: 'Ciondolo decorativo dipinto a mano',
-        category: 'Ciondoli',
-        image_path: 'https://images.unsplash.com/photo-1609252907817-fad418fb02ed?crop=entropy&cs=srgb&fm=jpg&q=85&w=600',
-        created_at: new Date().toISOString(),
-        artisan_name: 'Ceramiche di Luna',
-        artisan_picture: 'https://images.unsplash.com/photo-1768478563696-ca21b9692a8f?crop=entropy&cs=srgb&fm=jpg&q=85&w=150',
-        artisan_whatsapp: ''
-    },
-    {
-        work_id: 'demo_6',
-        user_id: 'demo_user_2',
-        title: 'Collana con Perle',
-        description: 'Collana elegante con perle naturali',
-        category: 'Collane',
-        image_path: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?crop=entropy&cs=srgb&fm=jpg&q=85&w=600',
-        created_at: new Date().toISOString(),
-        artisan_name: 'Intrecci di Filo',
-        artisan_picture: 'https://images.unsplash.com/photo-1673103622378-62e9a29f71f2?crop=entropy&cs=srgb&fm=jpg&q=85&w=150',
-        artisan_whatsapp: ''
-    }
-];
 
 const Home = () => {
     const [works, setWorks] = useState([]);

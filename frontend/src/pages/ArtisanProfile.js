@@ -7,6 +7,8 @@ import { Avatar, AvatarImage, AvatarFallback } from '../components/ui/avatar';
 import { Button } from '../components/ui/button';
 import { FaWhatsapp } from 'react-icons/fa';
 import { ArrowLeft, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
+import { getDemoArtisan, getDemoWorksByUser } from '../data/demoData';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -21,6 +23,16 @@ const ArtisanProfile = () => {
     }, [userId]);
 
     const fetchArtisan = async () => {
+        // Check if it's a demo user first
+        if (userId.startsWith('demo_user_')) {
+            const demoArtisan = getDemoArtisan(userId);
+            const demoWorks = getDemoWorksByUser(userId);
+            setProfile(demoArtisan);
+            setWorks(demoWorks);
+            setLoading(false);
+            return;
+        }
+        
         try {
             const [profileRes, worksRes] = await Promise.all([
                 axios.get(`${API}/profile/${userId}`),
@@ -41,6 +53,8 @@ const ArtisanProfile = () => {
                 `Ciao! Ho visto il tuo profilo su Cuore Artigiano e sono interessato/a alle tue creazioni.`
             );
             window.open(`https://wa.me/${profile.whatsapp}?text=${message}`, '_blank');
+        } else {
+            toast.info('Questo è un profilo demo. Numero WhatsApp non disponibile.');
         }
     };
 
@@ -115,15 +129,22 @@ const ArtisanProfile = () => {
                         </p>
                     )}
 
-                    {profile.whatsapp && (
-                        <Button
-                            onClick={handleWhatsAppContact}
-                            className="bg-[#25D366] hover:bg-[#20BD5A] text-white rounded-full px-8 py-3 text-lg"
-                            data-testid="contact-artisan-button"
-                        >
-                            <FaWhatsapp className="w-5 h-5 mr-2" />
-                            Contatta l'Artigiano
-                        </Button>
+                    <Button
+                        onClick={handleWhatsAppContact}
+                        className="bg-[#25D366] hover:bg-[#20BD5A] text-white rounded-full px-8 py-3 text-lg"
+                        data-testid="contact-artisan-button"
+                    >
+                        <FaWhatsapp className="w-5 h-5 mr-2" />
+                        Contatta l'Artigiano
+                    </Button>
+
+                    {/* Demo notice */}
+                    {userId.startsWith('demo_user_') && (
+                        <div className="mt-6 bg-[#F9F6F0] border border-[rgba(116,146,116,0.3)] rounded-xl p-4">
+                            <p className="text-sm text-[#7A5E46]">
+                                Questo è un profilo dimostrativo. Accedi per creare il tuo profilo artigiano!
+                            </p>
+                        </div>
                     )}
                 </div>
             </section>

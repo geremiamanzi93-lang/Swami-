@@ -7,6 +7,7 @@ import { Button } from '../components/ui/button';
 import { FaWhatsapp } from 'react-icons/fa';
 import { Share2, ArrowLeft, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { getDemoWork } from '../data/demoData';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -20,6 +21,14 @@ const WorkDetail = () => {
     }, [workId]);
 
     const fetchWork = async () => {
+        // Check if it's a demo work first
+        if (workId.startsWith('demo_')) {
+            const demoWork = getDemoWork(workId);
+            setWork(demoWork);
+            setLoading(false);
+            return;
+        }
+        
         try {
             const response = await axios.get(`${API}/works/${workId}`);
             setWork(response.data);
@@ -37,7 +46,7 @@ const WorkDetail = () => {
             );
             window.open(`https://wa.me/${work.artisan_whatsapp}?text=${message}`, '_blank');
         } else {
-            toast.error('Numero WhatsApp non disponibile');
+            toast.info('Questa è un\'opera demo. Numero WhatsApp non disponibile.');
         }
     };
 
@@ -182,6 +191,15 @@ const WorkDetail = () => {
                                 </Button>
                             </div>
                         </div>
+
+                        {/* Demo notice */}
+                        {workId.startsWith('demo_') && (
+                            <div className="bg-[#F9F6F0] border border-[rgba(116,146,116,0.3)] rounded-xl p-4 text-center">
+                                <p className="text-sm text-[#7A5E46]">
+                                    Questa è un'opera dimostrativa. Accedi per pubblicare le tue creazioni!
+                                </p>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
