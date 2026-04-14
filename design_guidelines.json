@@ -1,0 +1,146 @@
+{
+  "theme": "LIGHT",
+  "archetype": "1 (Organic & Earthy)",
+  "design_philosophy": "A minimalist, clean, and elegant layout optimized for smartphones. Captures the essence of handmade crafts using earthy tones, soft shadows, and a Pinterest-style masonry grid for an immersive visual experience.",
+  "colors": {
+    "background": {
+      "base": "#F9F6F0",
+      "surface": "#FFFFFF",
+      "glass": "rgba(249, 246, 240, 0.85)"
+    },
+    "primary": {
+      "DEFAULT": "#749274",
+      "hover": "#648064",
+      "foreground": "#FFFFFF"
+    },
+    "secondary": {
+      "DEFAULT": "#2E5339",
+      "foreground": "#FFFFFF"
+    },
+    "text": {
+      "DEFAULT": "#4A3018",
+      "muted": "#7A5E46",
+      "inverse": "#FFFFFF"
+    },
+    "border": {
+      "light": "rgba(116, 146, 116, 0.2)",
+      "medium": "rgba(116, 146, 116, 0.4)"
+    }
+  },
+  "typography": {
+    "font_families": {
+      "heading": "Playfair Display, serif",
+      "body": "Manrope, sans-serif"
+    },
+    "rules": {
+      "h1": "text-4xl sm:text-5xl tracking-tight font-serif text-[#2E5339]",
+      "h2": "text-2xl sm:text-3xl font-serif text-[#4A3018]",
+      "body": "text-base leading-relaxed text-[#4A3018]",
+      "brand_logo": "text-2xl font-serif font-bold text-[#2E5339] flex items-center gap-2",
+      "artisan_name": "text-sm sm:text-base font-semibold text-[#4A3018] tracking-tight"
+    }
+  },
+  "spacing_and_layout": {
+    "grid_system": "Masonry grid using CSS columns (e.g., columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-4 md:gap-6). Items must use 'break-inside-avoid mb-4 md:mb-6'.",
+    "container_padding": "px-4 md:px-8 py-6 max-w-[1600px] mx-auto",
+    "border_radius": "rounded-2xl for main images, rounded-full for avatars and filters, rounded-xl for buttons.",
+    "shadows": {
+      "soft": "shadow-[0_4px_20px_rgba(74,48,24,0.05)]",
+      "hover": "shadow-[0_8px_30px_rgba(46,83,57,0.12)]"
+    }
+  },
+  "components": {
+    "header": {
+      "style": "Sticky at top, background 'glass' (backdrop-blur-xl), subtle bottom border. Must contain Brand Name ('Cuore Artigiano' with Heart icon in Verde Foresta) on left, Google Login button on right."
+    },
+    "category_filters": {
+      "style": "Horizontally scrollable flex container (no scrollbar). Pill-shaped buttons. Inactive: border border-light, text-muted. Active: bg-[#2E5339] text-white shadow-soft.",
+      "items": ["Tutti", "Orecchini", "Collane", "Ciondoli", "Borse", "Ciondoli per capelli", "Scacciapensieri", "Uncinetto"]
+    },
+    "masonry_item": {
+      "wrapper": "break-inside-avoid mb-6 flex flex-col gap-3 group relative cursor-pointer",
+      "image": "w-full h-auto object-cover rounded-2xl transition-transform duration-300 group-hover:scale-[1.02]",
+      "overlay_actions": "Absolute positioning over image on hover (Desktop) or always visible/accessible (Mobile). Includes 'Contatta' (WhatsApp) and 'Condividi'.",
+      "footer": "Flex row, items-center gap-3 mt-2. Left: 32px rounded-full avatar. Right: Artisan brand name."
+    },
+    "artisan_profile": {
+      "layout": "Hero section centered: Large avatar (120px), Brand Name (h1), Bio (max-w-2xl text-center). Followed by 'Contatta l'Artigiano' CTA button. Divider, then Masonry Grid of their works."
+    },
+    "buttons": {
+      "primary": "bg-[#749274] hover:bg-[#648064] text-white rounded-full px-6 py-2.5 font-medium transition-all duration-200",
+      "google_auth": "Flex items-center gap-2 bg-white border border-light text-[#4A3018] rounded-full px-5 py-2 font-medium hover:bg-[#F9F6F0]"
+    }
+  },
+  "icons": {
+    "library": "lucide-react and react-icons/fa (for FaWhatsapp and FaGoogle)",
+    "usage": {
+      "logo": "Heart icon next to 'Cuore Artigiano', colored Verde Foresta (#2E5339)",
+      "contact": "FaWhatsapp for 'Contatta l'Artigiano'",
+      "share": "Share icon from lucide-react"
+    }
+  },
+  "media": {
+    "masonry_items": [
+      {
+        "url": "https://images.unsplash.com/photo-1609252908235-20aeac3bbf8f?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA4Mzl8MHwxfHNlYXJjaHwzfHxoYW5kbWFkZSUyMGNlcmFtaWMlMjBlYXJyaW5ncyUyMGpld2Vscnl8ZW58MHx8fHwxNzc2MjAxMDgxfDA&ixlib=rb-4.1.0&q=85",
+        "category": "Orecchini",
+        "artisan_name": "Ceramiche di Luna",
+        "description": "silver necklace with heart pendant"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1770637266187-60cf9d509593?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NDh8MHwxfHNlYXJjaHwxfHxoYW5kbWFkZSUyMGNyb2NoZXQlMjBiYWd8ZW58MHx8fHwxNzc2MjAxMDgxfDA&ixlib=rb-4.1.0&q=85",
+        "category": "Borse",
+        "artisan_name": "Intrecci di Filo",
+        "description": "A colorful bag filled with yarn"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1767608551302-1db76f601c38?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxODF8MHwxfHNlYXJjaHwzfHx3aW5kJTIwY2hpbWVzJTIwbmF0dXJlfGVufDB8fHx8MTc3NjIwMTA4MXww&ixlib=rb-4.1.0&q=85",
+        "category": "Scacciapensieri",
+        "artisan_name": "Vento & Suono",
+        "description": "Wind chimes hanging from a tree branch"
+      },
+      {
+        "url": "https://images.pexels.com/photos/33853684/pexels-photo-33853684.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "category": "Uncinetto",
+        "artisan_name": "Mani d'Oro",
+        "description": "Vibrant multicolored crochet handbag"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1609252907817-fad418fb02ed?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA4Mzl8MHwxfHNlYXJjaHwxfHxoYW5kbWFkZSUyMGNlcmFtaWMlMjBlYXJyaW5ncyUyMGpld2Vscnl8ZW58MHx8fHwxNzc2MjAxMDgxfDA&ixlib=rb-4.1.0&q=85",
+        "category": "Ciondoli",
+        "artisan_name": "Ceramiche di Luna",
+        "description": "white and black floral round ornament"
+      }
+    ],
+    "avatars": [
+      {
+        "url": "https://images.unsplash.com/photo-1768478563696-ca21b9692a8f?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NzV8MHwxfHNlYXJjaHwxfHxzbWlsaW5nJTIwZmVtYWxlJTIwYXJ0aXNhbiUyMHBvcnRyYWl0fGVufDB8fHx8MTc3NjIwMTA4MXww&ixlib=rb-4.1.0&q=85",
+        "usage": "Profile picture for Ceramiche di Luna"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1673103622378-62e9a29f71f2?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NzV8MHwxfHNlYXJjaHwzfHxzbWlsaW5nJTIwZmVtYWxlJTIwYXJ0aXNhbiUyMHBvcnRyYWl0fGVufDB8fHx8MTc3NjIwMTA4MXww&ixlib=rb-4.1.0&q=85",
+        "usage": "Profile picture for Intrecci di Filo"
+      },
+      {
+        "url": "https://images.pexels.com/photos/33762784/pexels-photo-33762784.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "usage": "Profile picture for Vento & Suono"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1743807059766-9d3ca4f35b60?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NzV8MHwxfHNlYXJjaHwyfHxzbWlsaW5nJTIwZmVtYWxlJTIwYXJ0aXNhbiUyMHBvcnRyYWl0fGVufDB8fHx8MTc3NjIwMTA4MXww&ixlib=rb-4.1.0&q=85",
+        "usage": "Profile picture for Mani d'Oro"
+      }
+    ]
+  },
+  "instructions_to_main_agent": [
+    "Build the UI in pure React + Tailwind CSS. Use Vite/React setup with .jsx/.js files.",
+    "IMPORTANT: Keep all text exclusively in Italian ('Cuore Artigiano', 'Cerca...', 'Accedi con Google', 'Contatta l\\'Artigiano', 'Condividi', etc.).",
+    "Install and use `react-icons` for FaWhatsapp, FaGoogle, etc. Install `lucide-react` for standard UI icons like Share, Heart.",
+    "Implement the masonry grid using Tailwind CSS multi-column layout (`columns-2 md:columns-3 xl:columns-4 gap-6`) or a library like `react-masonry-css`.",
+    "Apply `data-testid` to all interactive and key informational elements (e.g., `data-testid='filter-button-orecchini'`, `data-testid='contact-artisan-button'`).",
+    "Implement Google Auth layout/UI (mock the actual integration if backend isn't ready).",
+    "WhatsApp button should use a predefined link like `https://wa.me/...?text=Ciao...` or simulate it visually.",
+    "The application is display-only. Do not add any cart or payment functionality.",
+    "Follow the specific color palette precisely: Background Cream (#F9F6F0), details Sage Green (#749274), Logo/Active Forest Green (#2E5339), and Text Chocolate Brown (#4A3018).",
+    "Make sure to import Google Fonts 'Playfair Display' and 'Manrope' in index.html or index.css."
+  ]
+}
