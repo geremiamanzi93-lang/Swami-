@@ -1,34 +1,60 @@
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
+/* Custom styles for Cuore Artigiano */
+
+.card-hover {
+    transition: all 0.3s ease;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
+.card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(46, 83, 57, 0.12);
+}
+
+.image-hover {
+    transition: transform 0.3s ease;
+}
+
+.group:hover .image-hover {
+    transform: scale(1.02);
+}
+
+.overlay-fade {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.group:hover .overlay-fade {
+    opacity: 1;
+}
+
+/* Mobile: always show overlay buttons */
+@media (max-width: 768px) {
+    .overlay-fade {
+        opacity: 1;
     }
 }
 
-.App-header {
-    background-color: #0f0f10;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
+/* Animation for filter pills */
+.filter-pill {
+    transition: all 0.2s ease;
 }
 
-.App-link {
-    color: #61dafb;
+.filter-pill:hover {
+    transform: translateY(-2px);
 }
 
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+/* Glassmorphism header */
+.glass-header {
+    background: rgba(249, 246, 240, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
+
+/* Soft shadow */
+.shadow-soft {
+    box-shadow: 0 4px 20px rgba(74, 48, 24, 0.05);
+}
+
+/* Hover shadow */
+.shadow-hover:hover {
+    box-shadow: 0 8px 30px rgba(46, 83, 57, 0.12);
 }
