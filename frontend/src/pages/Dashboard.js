@@ -30,7 +30,7 @@ import { toast } from 'sonner';
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
 const Dashboard = () => {
-    const { user, loading: authLoading, isAuthenticated, updateProfile } = useAuth();
+    const { user, loading: authLoading, isAuthenticated, updateProfile, getAuthHeaders } = useAuth();
     const navigate = useNavigate();
     const [works, setWorks] = useState([]);
     const [loading, setLoading] = useState(true);
