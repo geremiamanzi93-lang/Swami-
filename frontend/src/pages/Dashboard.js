@@ -76,7 +76,8 @@ const Dashboard = () => {
         try {
             const response = await axios.get(`${API}/works`, {
                 params: { user_id: user?.user_id },
-                withCredentials: true
+                withCredentials: true,
+                headers: getAuthHeaders()
             });
             setWorks(response.data);
         } catch (error) {
@@ -108,7 +109,7 @@ const Dashboard = () => {
             setUploading(true);
             const response = await axios.post(`${API}/upload`, formData, {
                 withCredentials: true,
-                headers: { 'Content-Type': 'multipart/form-data' }
+                headers: { 'Content-Type': 'multipart/form-data', ...getAuthHeaders() }
             });
             
             await updateProfile({ profile_image: response.data.path });
@@ -131,7 +132,7 @@ const Dashboard = () => {
             setUploading(true);
             const response = await axios.post(`${API}/upload`, formData, {
                 withCredentials: true,
-                headers: { 'Content-Type': 'multipart/form-data' }
+                headers: { 'Content-Type': 'multipart/form-data', ...getAuthHeaders() }
             });
             
             setWorkForm(prev => ({ ...prev, image_path: response.data.path }));
@@ -153,7 +154,7 @@ const Dashboard = () => {
         }
 
         try {
-            await axios.post(`${API}/works`, workForm, { withCredentials: true });
+            await axios.post(`${API}/works`, workForm, { withCredentials: true, headers: getAuthHeaders() });
             toast.success('Opera pubblicata con successo!');
             setIsWorkDialogOpen(false);
             setWorkForm({ title: '', description: '', category: '', image_path: '' });

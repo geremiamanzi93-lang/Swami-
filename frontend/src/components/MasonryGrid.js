@@ -10,7 +10,7 @@ const breakpointColumns = {
     640: 2
 };
 
-const MasonryGrid = ({ works, emptyMessage = "Nessuna opera trovata" }) => {
+const MasonryGrid = ({ works, likedWorkIds = [], onLikeToggle, emptyMessage = "Nessuna opera trovata" }) => {
     if (!works || works.length === 0) {
         return (
             <div 
@@ -31,7 +31,12 @@ const MasonryGrid = ({ works, emptyMessage = "Nessuna opera trovata" }) => {
             data-testid="masonry-grid"
         >
             {works.map((work) => (
-                <WorkCard key={work.work_id} work={work} />
+                <WorkCard 
+                    key={work.work_id} 
+                    work={work} 
+                    isLiked={likedWorkIds.includes(work.work_id)}
+                    onLikeToggle={onLikeToggle}
+                />
             ))}
         </Masonry>
     );

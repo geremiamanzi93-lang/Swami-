@@ -77,6 +77,11 @@ class WorkUpdate(BaseModel):
     description: Optional[str] = None
     category: Optional[str] = None
 
+class LikeResponse(BaseModel):
+    work_id: str
+    liked: bool
+    total_likes: int
+
 # ==================== STORAGE ====================
 
 def init_storage():
@@ -226,7 +231,11 @@ async def exchange_session(request: Request):
     # Get updated user
     user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
     
-    response = JSONResponse(content=user)
+    # Include session_token in response body so frontend can store in localStorage
+    user_response = dict(user)
+    user_response["session_token"] = session_token
+    
+    response = JSONResponse(content=user_response)
     response.set_cookie(
         key="session_token",
         value=session_token,
@@ -386,6 +395,71 @@ async def delete_work(work_id: str, request: Request):
     
     await db.works.update_one({"work_id": work_id}, {"$set": {"is_deleted": True}})
     return {"message": "Opera eliminata"}
+
+# ==================== LIKES ENDPOINTS ====================
+
+@api_router.post("/works/{work_id}/like", response_model=LikeResponse)
+async def toggle_like(work_id: str, request: Request):
+    """Toggle like on a work."""
+    user = await get_current_user(request)
+    
+    existing = await db.likes.find_one(
+        {"work_id": work_id, "user_id": user["user_id"]}, {"_id": 0}
+    )
+    
+    if existing:
+        await db.likes.delete_one({"work_id": work_id, "user_id": user["user_id"]})
+        liked = False
+    else:
+        await db.likes.insert_one({
+            "like_id": f"like_{uuid.uuid4().hex[:12]}",
+            "work_id": work_id,
+            "user_id": user["user_id"],
+            "created_at": datetime.now(timezone.utc).isoformat()
+        })
+        liked = True
+    
+    total = await db.likes.count_documents({"work_id": work_id})
+    return LikeResponse(work_id=work_id, liked=liked, total_likes=total)
+
+@api_router.get("/works/{work_id}/likes")
+async def get_likes(work_id: str, request: Request):
+    """Get like count and whether current user liked it."""
+    total = await db.likes.count_documents({"work_id": work_id})
+    liked = False
+    try:
+        user = await get_current_user(request)
+        existing = await db.likes.find_one(
+            {"work_id": work_id, "user_id": user["user_id"]}, {"_id": 0}
+        )
+        liked = existing is not None
+    except HTTPException:
+        pass
+    return {"work_id": work_id, "liked": liked, "total_likes": total}
+
+@api_router.get("/likes/my")
+async def get_my_likes(request: Request):
+    """Get all work_ids the current user has liked."""
+    user = await get_current_user(request)
+    likes = await db.likes.find({"user_id": user["user_id"]}, {"_id": 0, "work_id": 1}).to_list(1000)
+    return [l["work_id"] for l in likes]
+
+# ==================== SEARCH ENDPOINTS ====================
+
+@api_router.get("/search/artisans")
+async def search_artisans(q: str = ""):
+    """Search artisans by brand name or name."""
+    if not q or len(q) < 2:
+        return []
+    
+    query = {
+        "$or": [
+            {"brand_name": {"$regex": q, "$options": "i"}},
+            {"name": {"$regex": q, "$options": "i"}}
+        ]
+    }
+    users = await db.users.find(query, {"_id": 0}).to_list(20)
+    return users
 
 # ==================== FILE UPLOAD ====================
 

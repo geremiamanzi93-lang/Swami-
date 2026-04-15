@@ -1,13 +1,19 @@
 import { useNavigate } from 'react-router-dom';
 import { FaWhatsapp } from 'react-icons/fa';
-import { Share2 } from 'lucide-react';
+import { Share2, Heart } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
 import { toast } from 'sonner';
+import { useAuth } from '../contexts/AuthContext';
+import { useState } from 'react';
+import axios from 'axios';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
-const WorkCard = ({ work }) => {
+const WorkCard = ({ work, isLiked: initialIsLiked = false, onLikeToggle }) => {
     const navigate = useNavigate();
+    const { isAuthenticated, login, getAuthHeaders } = useAuth();
+    const [isLiked, setIsLiked] = useState(initialIsLiked);
+    const [liking, setLiking] = useState(false);
     
     const imageUrl = work.image_path?.startsWith('http') 
         ? work.image_path 
@@ -43,9 +49,46 @@ const WorkCard = ({ work }) => {
                 url: shareUrl
             }).catch(() => {});
         } else {
-            // Fallback: share on WhatsApp
             const waText = encodeURIComponent(`${shareText} ${shareUrl}`);
             window.open(`https://wa.me/?text=${waText}`, '_blank');
+        }
+    };
+    
+    const handleLike = async (e) => {
+        e.stopPropagation();
+        
+        if (!isAuthenticated) {
+            toast('Accedi per salvare le opere nei preferiti', {
+                action: {
+                    label: 'Accedi',
+                    onClick: login
+                }
+            });
+            return;
+        }
+        
+        if (liking || work.work_id.startsWith('demo_')) {
+            if (work.work_id.startsWith('demo_')) {
+                // For demo works, just toggle locally
+                setIsLiked(!isLiked);
+                toast.success(isLiked ? 'Rimosso dai preferiti' : 'Aggiunto ai preferiti');
+            }
+            return;
+        }
+        
+        setLiking(true);
+        try {
+            const response = await axios.post(
+                `${API}/works/${work.work_id}/like`,
+                {},
+                { withCredentials: true, headers: getAuthHeaders() }
+            );
+            setIsLiked(response.data.liked);
+            if (onLikeToggle) onLikeToggle(work.work_id, response.data.liked);
+        } catch (error) {
+            toast.error('Errore nel salvataggio');
+        } finally {
+            setLiking(false);
         }
     };
     
@@ -70,6 +113,19 @@ const WorkCard = ({ work }) => {
                         e.target.src = 'https://via.placeholder.com/400x500?text=Immagine+non+disponibile';
                     }}
                 />
+                
+                {/* Like button - always visible top-right */}
+                <button
+                    onClick={handleLike}
+                    className={`absolute top-3 right-3 p-2.5 rounded-full transition-all duration-200 z-10 ${
+                        isLiked 
+                            ? 'bg-white text-red-500 shadow-md' 
+                            : 'bg-white/80 text-[#4A3018]/60 hover:bg-white hover:text-red-500 shadow-sm'
+                    }`}
+                    data-testid={`like-button-${work.work_id}`}
+                >
+                    <Heart className={`w-5 h-5 transition-all duration-200 ${isLiked ? 'fill-red-500' : ''}`} />
+                </button>
                 
                 {/* Overlay actions */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent overlay-fade md:opacity-0 md:group-hover:opacity-100">

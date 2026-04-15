@@ -36,10 +36,21 @@ const AuthCallback = () => {
                     { withCredentials: true }
                 );
 
-                setUser(response.data);
+                const userData = response.data;
+                
+                // Store session_token in localStorage for persistence across page reloads
+                // Backend returns session_token in the response body
+                if (userData.session_token) {
+                    localStorage.setItem('session_token', userData.session_token);
+                }
+                
+                // Remove session_token from user object before setting in state
+                const { session_token, ...userWithoutToken } = userData;
+                
+                setUser(userWithoutToken);
                 
                 // Navigate to dashboard
-                navigate('/dashboard', { replace: true, state: { user: response.data } });
+                navigate('/dashboard', { replace: true, state: { user: userWithoutToken } });
             } catch (err) {
                 console.error('Auth callback error:', err);
                 setError('Autenticazione fallita. Riprova.');

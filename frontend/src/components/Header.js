@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Heart, LogOut, User, Menu, X } from 'lucide-react';
+import { Heart, LogOut, User, Menu, X, Users } from 'lucide-react';
 import { FaGoogle } from 'react-icons/fa';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from './ui/button';
@@ -26,7 +26,7 @@ const Header = () => {
                     {/* Logo */}
                     <Link 
                         to="/" 
-                        className="flex items-center gap-2"
+                        className="flex items-center gap-2 shrink-0"
                         data-testid="logo-link"
                     >
                         <Heart 
@@ -38,59 +38,79 @@ const Header = () => {
                         </span>
                     </Link>
 
-                    {/* Desktop Auth */}
-                    <div className="hidden md:flex items-center gap-4">
+                    {/* Desktop Actions */}
+                    <div className="hidden md:flex items-center gap-3">
                         {isAuthenticated ? (
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <button 
-                                        className="flex items-center gap-3 hover:opacity-80 transition-opacity"
-                                        data-testid="user-menu-trigger"
+                            <>
+                                <Link to="/dashboard">
+                                    <Button
+                                        variant="outline"
+                                        className="border-[#749274] text-[#4A3018] hover:bg-[#F9F6F0] rounded-full px-5"
+                                        data-testid="my-profile-nav-button"
                                     >
-                                        <Avatar className="w-10 h-10 border-2 border-[#749274]">
-                                            <AvatarImage 
-                                                src={user?.profile_image || user?.picture} 
-                                                alt={user?.brand_name || user?.name} 
-                                            />
-                                            <AvatarFallback className="bg-[#749274] text-white">
-                                                {(user?.brand_name || user?.name || 'U').charAt(0)}
-                                            </AvatarFallback>
-                                        </Avatar>
-                                        <span className="font-medium text-[#4A3018]">
-                                            {user?.brand_name || user?.name}
-                                        </span>
-                                    </button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" className="w-48">
-                                    <DropdownMenuItem asChild>
-                                        <Link 
-                                            to="/dashboard" 
-                                            className="flex items-center gap-2"
-                                            data-testid="dashboard-link"
+                                        <User className="w-4 h-4 mr-2" />
+                                        Il Mio Profilo
+                                    </Button>
+                                </Link>
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <button 
+                                            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+                                            data-testid="user-menu-trigger"
                                         >
-                                            <User className="w-4 h-4" />
-                                            Il Mio Profilo
-                                        </Link>
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem 
-                                        onClick={logout}
-                                        className="flex items-center gap-2 text-red-600"
-                                        data-testid="logout-button"
-                                    >
-                                        <LogOut className="w-4 h-4" />
-                                        Esci
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
+                                            <Avatar className="w-10 h-10 border-2 border-[#749274]">
+                                                <AvatarImage 
+                                                    src={user?.profile_image || user?.picture} 
+                                                    alt={user?.brand_name || user?.name} 
+                                                />
+                                                <AvatarFallback className="bg-[#749274] text-white">
+                                                    {(user?.brand_name || user?.name || 'U').charAt(0)}
+                                                </AvatarFallback>
+                                            </Avatar>
+                                        </button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end" className="w-48">
+                                        <DropdownMenuItem asChild>
+                                            <Link 
+                                                to="/dashboard" 
+                                                className="flex items-center gap-2"
+                                                data-testid="dashboard-link"
+                                            >
+                                                <User className="w-4 h-4" />
+                                                Il Mio Profilo
+                                            </Link>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem 
+                                            onClick={logout}
+                                            className="flex items-center gap-2 text-red-600"
+                                            data-testid="logout-button"
+                                        >
+                                            <LogOut className="w-4 h-4" />
+                                            Esci
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            </>
                         ) : (
-                            <Button
-                                onClick={login}
-                                className="flex items-center gap-2 bg-white border border-[rgba(116,146,116,0.2)] text-[#4A3018] rounded-full px-5 py-2 font-medium hover:bg-[#F9F6F0] transition-colors"
-                                data-testid="google-login-button"
-                            >
-                                <FaGoogle className="w-4 h-4" />
-                                Accedi con Google
-                            </Button>
+                            <>
+                                <Button
+                                    onClick={login}
+                                    className="bg-[#2E5339] hover:bg-[#1e3a26] text-white rounded-full px-6 py-2.5 font-medium transition-colors"
+                                    data-testid="join-community-button"
+                                >
+                                    <Users className="w-4 h-4 mr-2" />
+                                    Unisciti alla Community
+                                </Button>
+                                <Button
+                                    onClick={login}
+                                    variant="outline"
+                                    className="flex items-center gap-2 bg-white border border-[rgba(116,146,116,0.2)] text-[#4A3018] rounded-full px-5 py-2 font-medium hover:bg-[#F9F6F0] transition-colors"
+                                    data-testid="google-login-button"
+                                >
+                                    <FaGoogle className="w-4 h-4" />
+                                    Accedi
+                                </Button>
+                            </>
                         )}
                     </div>
 
@@ -110,10 +130,10 @@ const Header = () => {
 
                 {/* Mobile Menu */}
                 {mobileMenuOpen && (
-                    <div className="md:hidden mt-4 pb-4 border-t border-[rgba(116,146,116,0.2)] pt-4">
+                    <div className="md:hidden mt-4 pb-4 border-t border-[rgba(116,146,116,0.2)] pt-4 space-y-3">
                         {isAuthenticated ? (
-                            <div className="space-y-3">
-                                <div className="flex items-center gap-3">
+                            <>
+                                <div className="flex items-center gap-3 pb-2">
                                     <Avatar className="w-10 h-10 border-2 border-[#749274]">
                                         <AvatarImage 
                                             src={user?.profile_image || user?.picture} 
@@ -144,16 +164,27 @@ const Header = () => {
                                     <LogOut className="w-4 h-4" />
                                     Esci
                                 </button>
-                            </div>
+                            </>
                         ) : (
-                            <Button
-                                onClick={login}
-                                className="w-full flex items-center justify-center gap-2 bg-white border border-[rgba(116,146,116,0.2)] text-[#4A3018] rounded-full px-5 py-2 font-medium hover:bg-[#F9F6F0] transition-colors"
-                                data-testid="mobile-google-login-button"
-                            >
-                                <FaGoogle className="w-4 h-4" />
-                                Accedi con Google
-                            </Button>
+                            <>
+                                <Button
+                                    onClick={login}
+                                    className="w-full bg-[#2E5339] hover:bg-[#1e3a26] text-white rounded-full py-2.5 font-medium"
+                                    data-testid="mobile-join-community-button"
+                                >
+                                    <Users className="w-4 h-4 mr-2" />
+                                    Unisciti alla Community
+                                </Button>
+                                <Button
+                                    onClick={login}
+                                    variant="outline"
+                                    className="w-full flex items-center justify-center gap-2 bg-white border border-[rgba(116,146,116,0.2)] text-[#4A3018] rounded-full px-5 py-2 font-medium hover:bg-[#F9F6F0]"
+                                    data-testid="mobile-google-login-button"
+                                >
+                                    <FaGoogle className="w-4 h-4" />
+                                    Accedi con Google
+                                </Button>
+                            </>
                         )}
                     </div>
                 )}
