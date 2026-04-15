@@ -40,6 +40,16 @@ const Header = () => {
 
                     {/* Desktop Actions */}
                     <div className="hidden md:flex items-center gap-3">
+                        <Link to="/">
+                            <Button
+                                variant="outline"
+                                className="border-[#749274] text-[#4A3018] hover:bg-[#F9F6F0] rounded-full px-5"
+                                data-testid="all-artisans-button"
+                            >
+                                <Users className="w-4 h-4 mr-2" />
+                                Tutti gli Artigiani
+                            </Button>
+                        </Link>
                         {isAuthenticated ? (
                             <>
                                 <Link to="/dashboard">
@@ -131,6 +141,15 @@ const Header = () => {
                 {/* Mobile Menu */}
                 {mobileMenuOpen && (
                     <div className="md:hidden mt-4 pb-4 border-t border-[rgba(116,146,116,0.2)] pt-4 space-y-3">
+                        <Link 
+                            to="/" 
+                            className="flex items-center gap-2 text-[#4A3018] font-medium py-2"
+                            onClick={() => setMobileMenuOpen(false)}
+                            data-testid="mobile-all-artisans-link"
+                        >
+                            <Users className="w-4 h-4" />
+                            Tutti gli Artigiani
+                        </Link>
                         {isAuthenticated ? (
                             <>
                                 <div className="flex items-center gap-3 pb-2">
