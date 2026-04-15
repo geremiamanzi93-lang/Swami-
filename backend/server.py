@@ -58,7 +58,8 @@ class WorkCreate(BaseModel):
     title: str
     description: Optional[str] = None
     category: str
-    image_path: str
+    image_path: Optional[str] = None
+    image_paths: Optional[List[str]] = None
 
 class WorkResponse(BaseModel):
     work_id: str
@@ -67,6 +68,7 @@ class WorkResponse(BaseModel):
     description: Optional[str] = None
     category: str
     image_path: str
+    image_paths: Optional[List[str]] = None
     created_at: str
     artisan_name: Optional[str] = None
     artisan_picture: Optional[str] = None
@@ -307,7 +309,8 @@ async def create_work(work: WorkCreate, request: Request):
         "title": work.title,
         "description": work.description or "",
         "category": work.category,
-        "image_path": work.image_path,
+        "image_path": work.image_paths[0] if work.image_paths else (work.image_path or ""),
+        "image_paths": work.image_paths or ([work.image_path] if work.image_path else []),
         "created_at": datetime.now(timezone.utc).isoformat(),
         "is_deleted": False
     }
@@ -350,6 +353,7 @@ async def get_works(category: Optional[str] = None, user_id: Optional[str] = Non
             "description": 1,
             "category": 1,
             "image_path": 1,
+            "image_paths": 1,
             "created_at": 1,
             "artisan_name": {"$ifNull": [
                 {"$cond": [{"$ne": ["$artisan.brand_name", ""]}, "$artisan.brand_name", "$artisan.name"]},

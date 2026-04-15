@@ -24,7 +24,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '../components/ui/select';
-import { Plus, Camera, Loader2, Pencil, Trash2 } from 'lucide-react';
+import { Plus, Camera, Loader2, Pencil, Trash2, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
@@ -50,10 +50,10 @@ const Dashboard = () => {
         title: '',
         description: '',
         category: '',
-        image_path: ''
+        image_paths: []
     });
 
-    const [workImagePreview, setWorkImagePreview] = useState('');
+    const [workImagePreviews, setWorkImagePreviews] = useState([]);
 
     useEffect(() => {
         if (!authLoading && !isAuthenticated) {
@@ -124,6 +124,10 @@ const Dashboard = () => {
     const handleWorkImageUpload = async (e) => {
         const file = e.target.files?.[0];
         if (!file) return;
+        if (workForm.image_paths.length >= 3) {
+            toast.error('Massimo 3 immagini per opera');
+            return;
+        }
 
         const formData = new FormData();
         formData.append('file', file);
@@ -135,20 +139,26 @@ const Dashboard = () => {
                 headers: { 'Content-Type': 'multipart/form-data', ...getAuthHeaders() }
             });
             
-            setWorkForm(prev => ({ ...prev, image_path: response.data.path }));
-            setWorkImagePreview(URL.createObjectURL(file));
+            setWorkForm(prev => ({ ...prev, image_paths: [...prev.image_paths, response.data.path] }));
+            setWorkImagePreviews(prev => [...prev, URL.createObjectURL(file)]);
             toast.success('Immagine caricata!');
         } catch (error) {
             toast.error('Errore nel caricamento dell\'immagine');
         } finally {
             setUploading(false);
+            if (fileInputRef.current) fileInputRef.current.value = '';
         }
+    };
+
+    const removeWorkImage = (index) => {
+        setWorkForm(prev => ({ ...prev, image_paths: prev.image_paths.filter((_, i) => i !== index) }));
+        setWorkImagePreviews(prev => prev.filter((_, i) => i !== index));
     };
 
     const handleWorkSubmit = async (e) => {
         e.preventDefault();
         
-        if (!workForm.title || !workForm.category || !workForm.image_path) {
+        if (!workForm.title || !workForm.category || workForm.image_paths.length === 0) {
             toast.error('Compila tutti i campi obbligatori');
             return;
         }
@@ -157,8 +167,8 @@ const Dashboard = () => {
             await axios.post(`${API}/works`, workForm, { withCredentials: true, headers: getAuthHeaders() });
             toast.success('Opera pubblicata con successo!');
             setIsWorkDialogOpen(false);
-            setWorkForm({ title: '', description: '', category: '', image_path: '' });
-            setWorkImagePreview('');
+            setWorkForm({ title: '', description: '', category: '', image_paths: [] });
+            setWorkImagePreviews([]);
             fetchMyWorks();
         } catch (error) {
             toast.error('Errore nella pubblicazione dell\'opera');
@@ -323,28 +333,40 @@ const Dashboard = () => {
                             <form onSubmit={handleWorkSubmit} className="space-y-4">
                                 {/* Image Upload */}
                                 <div>
-                                    <Label className="text-[#4A3018]">Immagine *</Label>
-                                    <div 
-                                        onClick={() => fileInputRef.current?.click()}
-                                        className="mt-2 border-2 border-dashed border-[rgba(116,146,116,0.3)] rounded-xl p-6 text-center cursor-pointer hover:border-[#749274] transition-colors"
-                                    >
-                                        {workImagePreview ? (
-                                            <img 
-                                                src={workImagePreview} 
-                                                alt="Preview" 
-                                                className="max-h-48 mx-auto rounded-lg"
-                                            />
-                                        ) : (
+                                    <Label className="text-[#4A3018]">Immagini * (max 3)</Label>
+                                    {/* Previews with X */}
+                                    {workImagePreviews.length > 0 && (
+                                        <div className="flex gap-3 mt-2 mb-2 flex-wrap">
+                                            {workImagePreviews.map((preview, idx) => (
+                                                <div key={idx} className="relative w-24 h-24 rounded-lg overflow-hidden border border-[rgba(116,146,116,0.3)]">
+                                                    <img src={preview} alt={`Foto ${idx + 1}`} className="w-full h-full object-cover" />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => removeWorkImage(idx)}
+                                                        className="absolute top-1 right-1 bg-black/60 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-black/80"
+                                                        data-testid={`remove-image-${idx}`}
+                                                    >
+                                                        <X className="w-3 h-3" />
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                    {workForm.image_paths.length < 3 && (
+                                        <div 
+                                            onClick={() => fileInputRef.current?.click()}
+                                            className="border-2 border-dashed border-[rgba(116,146,116,0.3)] rounded-xl p-4 text-center cursor-pointer hover:border-[#749274] transition-colors"
+                                        >
                                             <div className="text-[#7A5E46]">
                                                 {uploading ? (
-                                                    <Loader2 className="w-8 h-8 animate-spin mx-auto mb-2" />
+                                                    <Loader2 className="w-6 h-6 animate-spin mx-auto mb-1" />
                                                 ) : (
-                                                    <Camera className="w-8 h-8 mx-auto mb-2" />
+                                                    <Camera className="w-6 h-6 mx-auto mb-1" />
                                                 )}
-                                                <p>Clicca per caricare un'immagine</p>
+                                                <p className="text-sm">{workForm.image_paths.length === 0 ? "Clicca per caricare un'immagine" : `Aggiungi foto (${workForm.image_paths.length}/3)`}</p>
                                             </div>
-                                        )}
-                                    </div>
+                                        </div>
+                                    )}
                                     <input
                                         ref={fileInputRef}
                                         type="file"
@@ -399,7 +421,7 @@ const Dashboard = () => {
                                 <Button
                                     type="submit"
                                     className="w-full bg-[#749274] hover:bg-[#648064] text-white"
-                                    disabled={!workForm.title || !workForm.category || !workForm.image_path}
+                                    disabled={!workForm.title || !workForm.category || workForm.image_paths.length === 0}
                                     data-testid="publish-work-button"
                                 >
                                     Pubblica Opera

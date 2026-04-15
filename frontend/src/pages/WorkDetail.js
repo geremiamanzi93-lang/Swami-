@@ -5,7 +5,7 @@ import Header from '../components/Header';
 import { Avatar, AvatarImage, AvatarFallback } from '../components/ui/avatar';
 import { Button } from '../components/ui/button';
 import { FaWhatsapp } from 'react-icons/fa';
-import { Share2, ArrowLeft, Loader2 } from 'lucide-react';
+import { Share2, ArrowLeft, Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
 import { getDemoWork } from '../data/demoData';
 
@@ -15,6 +15,7 @@ const WorkDetail = () => {
     const { workId } = useParams();
     const [work, setWork] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [activeImageIndex, setActiveImageIndex] = useState(0);
 
     useEffect(() => {
         fetchWork();
@@ -66,9 +67,11 @@ const WorkDetail = () => {
         }
     };
 
-    const imageUrl = work?.image_path?.startsWith('http') 
-        ? work.image_path 
-        : `${API}/files/${work?.image_path}`;
+    const allImages = work?.image_paths?.length > 0 
+        ? work.image_paths 
+        : (work?.image_path ? [work.image_path] : []);
+    
+    const getImageUrl = (path) => path?.startsWith('http') ? path : `${API}/files/${path}`;
 
     const artisanImageUrl = work?.artisan_picture?.startsWith('http')
         ? work.artisan_picture
@@ -115,10 +118,10 @@ const WorkDetail = () => {
                 </Link>
 
                 <div className="grid md:grid-cols-2 gap-8">
-                    {/* Image */}
-                    <div className="rounded-2xl overflow-hidden shadow-soft">
+                    {/* Image Gallery */}
+                    <div className="rounded-2xl overflow-hidden shadow-soft relative">
                         <img
-                            src={imageUrl}
+                            src={getImageUrl(allImages[activeImageIndex])}
                             alt={work.title}
                             className="w-full h-auto object-cover"
                             onError={(e) => {
@@ -126,6 +129,33 @@ const WorkDetail = () => {
                             }}
                             data-testid="work-image"
                         />
+                        {allImages.length > 1 && (
+                            <>
+                                <button
+                                    onClick={() => setActiveImageIndex(i => (i - 1 + allImages.length) % allImages.length)}
+                                    className="absolute left-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow-md"
+                                    data-testid="prev-image-btn"
+                                >
+                                    <ChevronLeft className="w-5 h-5 text-[#4A3018]" />
+                                </button>
+                                <button
+                                    onClick={() => setActiveImageIndex(i => (i + 1) % allImages.length)}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow-md"
+                                    data-testid="next-image-btn"
+                                >
+                                    <ChevronRight className="w-5 h-5 text-[#4A3018]" />
+                                </button>
+                                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2">
+                                    {allImages.map((_, idx) => (
+                                        <button
+                                            key={idx}
+                                            onClick={() => setActiveImageIndex(idx)}
+                                            className={`w-2.5 h-2.5 rounded-full transition-colors ${idx === activeImageIndex ? 'bg-white' : 'bg-white/50'}`}
+                                        />
+                                    ))}
+                                </div>
+                            </>
+                        )}
                     </div>
 
                     {/* Details */}
