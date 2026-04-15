@@ -23,7 +23,7 @@ db = client[os.environ['DB_NAME']]
 # Object Storage Config
 STORAGE_URL = "https://integrations.emergentagent.com/objstore/api/v1/storage"
 EMERGENT_KEY = os.environ.get("EMERGENT_LLM_KEY")
-APP_NAME = "cuore-artigiano"
+APP_NAME = os.environ.get('APP_NAME', 'cuore-artigiano')
 storage_key = None
 
 # Configure logging
@@ -330,19 +330,41 @@ async def get_works(category: Optional[str] = None, user_id: Optional[str] = Non
     if user_id:
         query["user_id"] = user_id
     
-    works = await db.works.find(query, {"_id": 0}).sort("created_at", -1).to_list(1000)
+    # Use aggregation with $lookup to avoid N+1 queries
+    pipeline = [
+        {"$match": query},
+        {"$sort": {"created_at": -1}},
+        {"$limit": 1000},
+        {"$lookup": {
+            "from": "users",
+            "localField": "user_id",
+            "foreignField": "user_id",
+            "as": "artisan"
+        }},
+        {"$unwind": {"path": "$artisan", "preserveNullAndEmptyArrays": True}},
+        {"$project": {
+            "_id": 0,
+            "work_id": 1,
+            "user_id": 1,
+            "title": 1,
+            "description": 1,
+            "category": 1,
+            "image_path": 1,
+            "created_at": 1,
+            "artisan_name": {"$ifNull": [
+                {"$cond": [{"$ne": ["$artisan.brand_name", ""]}, "$artisan.brand_name", "$artisan.name"]},
+                "Artigiano"
+            ]},
+            "artisan_picture": {"$ifNull": [
+                {"$cond": [{"$ne": ["$artisan.profile_image", ""]}, "$artisan.profile_image", "$artisan.picture"]},
+                None
+            ]},
+            "artisan_whatsapp": {"$ifNull": ["$artisan.whatsapp", ""]}
+        }}
+    ]
     
-    # Enrich with artisan data
-    result = []
-    for work in works:
-        user = await db.users.find_one({"user_id": work["user_id"]}, {"_id": 0})
-        if user:
-            work["artisan_name"] = user.get("brand_name") or user.get("name")
-            work["artisan_picture"] = user.get("profile_image") or user.get("picture")
-            work["artisan_whatsapp"] = user.get("whatsapp")
-        result.append(WorkResponse(**work))
-    
-    return result
+    works = await db.works.aggregate(pipeline).to_list(1000)
+    return [WorkResponse(**w) for w in works]
 
 @api_router.get("/works/{work_id}", response_model=WorkResponse)
 async def get_work(work_id: str):
