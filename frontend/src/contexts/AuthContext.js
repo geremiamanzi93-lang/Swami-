@@ -1,7 +1,7 @@
-import { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import axios from 'axios';
 
-const API_URL = "https://swami-backend-t4ca.onrender.com/api";
+const API = "https://swami-backend-t4ca.onrender.com/api";
 
 const AuthContext = createContext(null);
 
@@ -19,7 +19,6 @@ export const AuthProvider = ({ children }) => {
 
     const checkAuth = useCallback(async () => {
         try {
-            // Try cookie-based auth first, then localStorage fallback
             const storedToken = localStorage.getItem('session_token');
             const headers = storedToken ? { Authorization: `Bearer ${storedToken}` } : {};
             
@@ -31,7 +30,6 @@ export const AuthProvider = ({ children }) => {
             return response.data;
         } catch (error) {
             setUser(null);
-            // If auth fails, clear stale token
             localStorage.removeItem('session_token');
             return null;
         } finally {
@@ -40,8 +38,6 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     useEffect(() => {
-        // CRITICAL: If returning from OAuth callback, skip the /me check.
-        // AuthCallback will exchange the session_id and establish the session first.
         if (window.location.hash?.includes('session_id=')) {
             setLoading(false);
             return;
@@ -49,7 +45,6 @@ export const AuthProvider = ({ children }) => {
         checkAuth();
     }, [checkAuth]);
 
-    // REMINDER: DO NOT HARDCODE THE URL, OR ADD ANY FALLBACKS OR REDIRECT URLS, THIS BREAKS THE AUTH
     const login = () => {
         const redirectUrl = window.location.origin + '/dashboard';
         window.location.href = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirectUrl)}`;
@@ -82,7 +77,6 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    // Helper to get auth headers for API calls
     const getAuthHeaders = useCallback(() => {
         const storedToken = localStorage.getItem('session_token');
         return storedToken ? { Authorization: `Bearer ${storedToken}` } : {};
