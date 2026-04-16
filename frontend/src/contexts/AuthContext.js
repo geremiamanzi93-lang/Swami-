@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import axios from 'axios';
 
-const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+https://swami-backend-t4ca.onrender.com/api
 
 const AuthContext = createContext(null);
 
