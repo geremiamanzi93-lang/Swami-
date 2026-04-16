@@ -1,13 +1,13 @@
 
 import "@/App.css";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import { AuthProvider } from "./contexts/AuthContext";
-import { Toaster } from "./components/ui/sonner";
-import Home from "./pages/Home";
-import Dashboard from "./pages/Dashboard";
-import ArtisanProfile from "./pages/ArtisanProfile";
-import WorkDetail from "./pages/WorkDetail";
-import AuthCallback from "./pages/AuthCallback";
+import { AuthProvider } from "../contexts/AuthContext";
+import { Toaster } from "../components/ui/sonner";
+import Home from "./Home";
+import Dashboard from "./Dashboard";
+import ArtisanProfile from "./ArtisanProfile";
+import WorkDetail from "./WorkDetail";
+import AuthCallback from "./AuthCallback";
 
 function AppRouter() {
     const location = useLocation();
