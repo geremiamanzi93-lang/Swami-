@@ -6,7 +6,7 @@ import { Avatar, AvatarImage, AvatarFallback } from '../components/ui/avatar';
 import { Button } from '../components/ui/button';
 import { FaWhatsapp } from 'react-icons/fa';
 import { Share2, ArrowLeft, Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
-import { toast } from 'sonner';
+import { toast } from '../components/ui/sonner';
 import { getDemoWork } from '../data/demoData';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
